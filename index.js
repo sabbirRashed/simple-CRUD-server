@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // middleware
@@ -28,10 +28,21 @@ const run = async () => {
         const db = client.db('simpleCRUD');
         const usersCollections = db.collection('users');
 
-        app.get('/users', async(req, res) =>{
+        app.get('/users', async (req, res) => {
             const cursor = usersCollections.find({});
             const result = await cursor.toArray();
             res.send(result)
+        });
+
+        app.get('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id)
+            }
+
+            const user = await usersCollections.findOne(query);
+            // console.log(id, 'userId');
+            res.send(user)
         })
 
         await client.db('admin').command({ ping: 1 });
