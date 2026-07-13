@@ -41,11 +41,11 @@ const run = async () => {
             }
 
             const user = await usersCollections.findOne(query);
-            // console.log(id, 'userId');
-            res.send(user)
+            console.log(id, 'userId');
+            res.send(user,)
         });
 
-        app.post('/users', async(req, res)=>{
+        app.post('/users', async (req, res) => {
             const newUser = req.body;
             // console.log('user to be inserted',newUser);
             const result = await usersCollections.insertOne(newUser);
@@ -54,10 +54,31 @@ const run = async () => {
 
         })
 
-        app.delete('/users/:id', async(req, res) =>{
+        app.patch('/users/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter ={
+                _id: new ObjectId(id)
+            };
+            const modifiedUser = req.body;
+
+            const updateDocument = {
+                $set:{
+                    name:modifiedUser.name,
+                    email:modifiedUser.email,
+                    role:modifiedUser.role
+                }
+            }
+
+            const result = await usersCollections.updateOne(filter, updateDocument)
+            res.send(result);
+
+
+        })
+
+        app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             const query = {
-             _id: new ObjectId(id)
+                _id: new ObjectId(id)
             }
             const user = await usersCollections.deleteOne(query);
             res.send(user);
