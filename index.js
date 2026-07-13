@@ -29,7 +29,7 @@ const run = async () => {
         const usersCollections = db.collection('users');
 
         app.get('/users', async (req, res) => {
-            const cursor = usersCollections.find({});
+            const cursor = await usersCollections.find({});
             const result = await cursor.toArray();
             res.send(result)
         });
@@ -44,6 +44,15 @@ const run = async () => {
             // console.log(id, 'userId');
             res.send(user)
         });
+
+        app.post('/users', async(req, res)=>{
+            const newUser = req.body;
+            // console.log('user to be inserted',newUser);
+            const result = await usersCollections.insertOne(newUser);
+            // console.log('after insert user:', result);
+            res.send(result)
+
+        })
 
         app.delete('/users/:id', async(req, res) =>{
             const id = req.params.id;
